@@ -51,17 +51,17 @@ $_root_dir/emit-make-conf > $EPREFIX/etc/make.conf
 echo 'creating $EPREFIX/etc/portage/package.use...' >&2
 $_root_dir/emit-package-use > $EPREFIX/etc/portage/package.use
 
-#echo 'emerging binutils...' >&2
-#emerge --oneshot sys-devel/binutils &>> $_log
-
-#echo 'emerging gcc...' >&2
-#emerge --oneshot sys-devel/gcc &>> $_log
-
-#echo 'emerging ncurses5.7...' >&2
-#emerge --oneshot '=sys-libs/ncurses-5.7-r7' &>> $_log
-
 echo 'emerging system...' >&2
+set +e
 emerge -e system &>> $_log
+_emerge_system_exit=$?
+if [ $_emerge_system_exit != 0 -a
+  "$(tail -1 $_log)" != '>>> No outdated packages were found on your system.'\
+  ]; then
+  echo '`emerge -e system` seems to be failed. exit. ' >&2
+  exit 1
+fi
+set -e
 
 echo 'creating $EPREFIX/startprefix...' >&2
 $_root_dir/make-startprefix
