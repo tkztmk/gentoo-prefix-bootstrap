@@ -1,0 +1,8 @@
+#!/bin/zsh -f
+set -e
+set -u
+
+source $(pwd)/bootstrap-profile.zsh
+
+./bootstrap-prefix.sh "$EPREFIX" startscript
+

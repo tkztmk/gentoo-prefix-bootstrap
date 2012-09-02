@@ -1,0 +1,26 @@
+#!/bin/zsh -f
+
+_gentoo_mirrors='http://ftp.jaist.ac.jp/pub/Linux/Gentoo http://distfiles.gentoo.org'
+echo "GENTOO_MIRRORS='$_gentoo_mirrors'"
+
+_use='unicode nls -ada -fortran -gcj -java -X'
+echo "USE='$_use'"
+
+_cflags='-march=native -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2'
+echo "CFLAGS='$_cflags'"
+
+_cppflags=''
+echo "CPPFLAGS='$_cflags $_cppflags'"
+
+_cxxflags=''
+echo "CXXFLAGS='$_cflags $_cxxflags'"
+
+_ldflags='-Wl,-O1,--sort-common,--as-needed,-z,relro,--hash-style=gnu'
+echo "LDFLAGS='$_ldflags'"
+
+_makeopts=''
+echo "MAKEOPTS='$(./emit-makeopts) $_makeopts'"
+
+_features='parallel-fetch userfetch'
+echo "FEATURES='$_features'"
+

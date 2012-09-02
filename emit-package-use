@@ -1,0 +1,8 @@
+#!/bin/zsh -f
+
+_gcc_use='-d -go -gtk -objc -objc++ -objc-gc'
+echo "sys-devel/gcc $_gcc_use"
+
+_binutils_use='-multislot -multitarget'
+echo "sys-devel/binutils $_binutils_use"
+

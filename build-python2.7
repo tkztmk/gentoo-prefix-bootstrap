@@ -1,0 +1,15 @@
+#!/bin/zsh -f 
+set -u 
+set -e
+_root_dir=$(pwd)
+mkdir -p $_root_dir/tkztmk
+mkdir -p $_root_dir/tkztmk-build
+cd $_root_dir/tkztmk-build
+rm -Rf Python-2.7.2
+wget -SN http://python.org/ftp/python/2.7.2/Python-2.7.2.tgz
+tar -xzf Python-2.7.2.tgz
+cd Python-2.7.2
+./configure --prefix=$_root_dir/tkztmk --with-threads
+make $($_root_dir/emit-makeopts)
+make install
+

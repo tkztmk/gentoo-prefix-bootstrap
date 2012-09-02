@@ -1,0 +1,3 @@
+#!/bin/zsh -f
+./nicedo /usr/bin/time -f 'result of /usr/bin/time: %E; %M KB; ' ./bootstrap-impl || echo 'failed.'
+

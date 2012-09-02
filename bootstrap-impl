@@ -1,0 +1,70 @@
+#!/bin/zsh -f
+set -u 
+set -e
+_root_dir=$(pwd)
+mkdir -p $_root_dir/log
+_start=$(date +%s)
+_log=$_root_dir/log/$_start.bootstrap.log
+
+source $_root_dir/bootstrap-profile.zsh
+rm -Rf $EPREFIX
+
+echo 'building python 2.7...' >&2 
+if [ ! -e $_root_dir/tkztmk/bin/python2.7 ]; then
+  $_root_dir/build-python2.7 &>> $_log
+fi
+_path_orig=$PATH
+export PATH="$_root_dir/tkztmk/bin:$PATH"
+
+echo 'bootstrapping tree...' >&2
+$_root_dir/bootstrap-prefix.sh "${EPREFIX}" tree &>> $_log 
+
+echo 'bootstrapping portage...' >&2
+$_root_dir/bootstrap-prefix.sh "${EPREFIX}" portage &>> $_log
+
+hash -r
+
+_pkg_prf=$EPREFIX/etc/portage/profile
+mkdir -p $_pkg_prf
+_pkg_prv=$_pkg_prf/package.provided
+
+echo "creating $_pkg_prv..." >&2
+$_root_dir/emit-package-provided > $_pkg_prv
+echo "dev-lang/python-2.7" >> $_pkg_prv
+
+#emerge net-misc/rsync
+#emerge --sync
+
+echo 'emerging bash...' >&2
+emerge --oneshot --nodeps bash &>> $_log 
+(cd $EPREFIX/usr/bin && ln -s /usr/bin/perl .)
+(cd $EPREFIX/usr/bin && ln -s $_root_dir/tkztmk/bin/* .)
+export PATH=$_path_orig
+
+echo 'emerging portage...' >&2
+env FEATURES='-collision-protect' emerge --oneshot sys-apps/portage &>> $_log
+hash -r
+
+echo 'creating $EPREFIX/etc/make.conf...' >&2
+$_root_dir/emit-make-conf > $EPREFIX/etc/make.conf
+
+echo 'creating $EPREFIX/etc/portage/package.use...' >&2
+$_root_dir/emit-package-use > $EPREFIX/etc/portage/package.use
+
+#echo 'emerging binutils...' >&2
+#emerge --oneshot sys-devel/binutils &>> $_log
+
+#echo 'emerging gcc...' >&2
+#emerge --oneshot sys-devel/gcc &>> $_log
+
+#echo 'emerging ncurses5.7...' >&2
+#emerge --oneshot '=sys-libs/ncurses-5.7-r7' &>> $_log
+
+echo 'emerging system...' >&2
+emerge -e system &>> $_log
+
+echo 'creating $EPREFIX/startprefix...' >&2
+$_root_dir/make-startprefix
+
+echo 'bootstrapping seems to be successfully finished! ' >&2
+

@@ -1,0 +1,68 @@
+#!/bin/zsh -f
+
+_provided_pkgs=(
+#  app-shells/bash
+  sys-devel/autoconf
+  sys-devel/automake
+  sys-apps/coreutils
+  sys-apps/findutils
+  sys-devel/m4
+#  sys-devel/binutils
+#  sys-devel/gcc
+  dev-lang/perl
+  sys-devel/flex
+  sys-devel/bison
+  app-arch/tar
+  sys-libs/zlib
+  dev-libs/openssl
+  sys-apps/grep
+  sys-devel/patch
+  app-arch/bzip2
+  net-misc/wget
+  net-misc/openssh
+#  sys-libs/ncurses
+  dev-libs/popt
+  sys-apps/sed
+  sys-devel/make
+  app-arch/gzip
+  sys-apps/gawk
+  sys-devel/libtool
+  sys-apps/file
+  sys-devel/gettext
+  sys-apps/diffutils
+  app-editors/nano
+  sys-apps/less
+  sys-apps/texinfo
+  sys-apps/man-pages
+  sys-apps/groff
+  dev-util/intltool
+#  sys-process/procps
+#  dev-libs/glib
+  sys-libs/readline
+#  dev-lang/python
+#  sys-apps/debianutils
+  )
+
+get-host-pkg-info(){
+  if [ -e /usr/bin/pacman ]; then
+    /usr/bin/pacman -Qi $1
+  elif [ -e /bin/rpm ]; then
+    /bin/rpm -qi $1
+  else
+    echo "Cannot detect package manager" >&2
+    exit 1
+  fi
+}
+
+get-host-pkg-ver(){
+  get-host-pkg-info $1 | perl -nle '/Version\s*:\s*([0-9][0-9\.]+[0-9])/ and print $1 and exit'
+}
+
+for _pkg in "$_provided_pkgs[@]" ; do
+  echo "${_pkg}-$(get-host-pkg-ver $(echo $_pkg | perl -nle '/\S+\/(\S+)/ and print $1 and exit') )"
+done
+
+echo "app-arch/xz-utils-$(get-host-pkg-ver xz)"
+
+echo "dev-libs/glib-$(get-host-pkg-ver glib2)"
+
