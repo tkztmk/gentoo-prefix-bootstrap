@@ -17,7 +17,8 @@ with $EPREFIX being $(pwd)/eprefix.
     git clone https://github.com/tkztmk/gentoo-prefix-bootstrap.git
     cd gentoo-prefix-bootstrap
     # check if ./emit-package-provided runs correctly. 
-    # if not, you probably have to install addtinal package to your host system. 
+    # if not, you probably have to install addtinal packages 
+    # to your host system. 
     # or, you can replace emit-package-provided with just '#!/bin/sh', 
     # though it is not tested at all. 
     ./emit-package-provided

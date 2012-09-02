@@ -67,4 +67,5 @@ echo 'creating $EPREFIX/startprefix...' >&2
 $_root_dir/make-startprefix
 
 echo 'bootstrapping seems to be successfully finished! ' >&2
+echo "now type eprefix/startprefix to enter Gentoo Prefix! " >&2
 
