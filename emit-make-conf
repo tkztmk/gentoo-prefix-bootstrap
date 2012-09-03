@@ -3,10 +3,12 @@
 _gentoo_mirrors='http://ftp.jaist.ac.jp/pub/Linux/Gentoo http://distfiles.gentoo.org'
 echo "GENTOO_MIRRORS='$_gentoo_mirrors'"
 
-_use='unicode nls -ada -fortran -gcj -java -X'
+_use='unicode -nls -ada -fortran -gcj -java -X -qt4 -kde -gtk -gnome -tk -fltk \
+  -wxwidgets nocxx'
 echo "USE='$_use'"
 
-_cflags='-march=native -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2'
+#_cflags='-march=native -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2'
+_cflags='-march=native -O'
 echo "CFLAGS='$_cflags'"
 
 _cppflags=''
@@ -15,8 +17,9 @@ echo "CPPFLAGS='$_cflags $_cppflags'"
 _cxxflags=''
 echo "CXXFLAGS='$_cflags $_cxxflags'"
 
-_ldflags='-Wl,-O1,--sort-common,--as-needed,-z,relro,--hash-style=gnu'
-echo "LDFLAGS='$_ldflags'"
+#_ldflags='-Wl,-O1,--sort-common,--as-needed,-z,relro,--hash-style=gnu'
+#_ldflags=''
+#echo "LDFLAGS='$_ldflags'"
 
 _makeopts=''
 echo "MAKEOPTS='$(./emit-makeopts) $_makeopts'"

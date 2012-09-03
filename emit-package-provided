@@ -41,6 +41,9 @@ _provided_pkgs=(
   sys-libs/readline
 #  dev-lang/python
 #  sys-apps/debianutils
+#  dev-libs/gmp
+#  dev-libs/mpc
+#  dev-libs/mpfr
   )
 
 get-host-pkg-info(){
@@ -65,4 +68,6 @@ done
 echo "app-arch/xz-utils-$(get-host-pkg-ver xz)"
 
 echo "dev-libs/glib-$(get-host-pkg-ver glib2)"
+
+#echo "dev-libs/mpc-$(get-host-pkg-ver libmpc)"
 

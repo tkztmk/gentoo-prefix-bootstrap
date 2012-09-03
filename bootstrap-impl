@@ -36,13 +36,13 @@ echo "dev-lang/python-2.7" >> $_pkg_prv
 #emerge --sync
 
 echo 'emerging bash...' >&2
-emerge --oneshot --nodeps bash &>> $_log 
+env CFLAGS='-march=native -O' emerge --oneshot --nodeps bash &>> $_log 
 (cd $EPREFIX/usr/bin && ln -s /usr/bin/perl .)
 (cd $EPREFIX/usr/bin && ln -s $_root_dir/tkztmk/bin/* .)
 export PATH=$_path_orig
 
 echo 'emerging portage...' >&2
-env FEATURES='-collision-protect' emerge --oneshot sys-apps/portage &>> $_log
+env FEATURES='-collision-protect' CFLAGS='-march=native -O' emerge --oneshot sys-apps/portage &>> $_log
 hash -r
 
 echo 'creating $EPREFIX/etc/make.conf...' >&2
@@ -51,17 +51,47 @@ $_root_dir/emit-make-conf > $EPREFIX/etc/make.conf
 echo 'creating $EPREFIX/etc/portage/package.use...' >&2
 $_root_dir/emit-package-use > $EPREFIX/etc/portage/package.use
 
+# we should install the specific versions of some basic tools. 
+
+echo '
+
+# Takezoe Tomoaki <tkztmk@outlook.com> (03 Sep 2012)
+# Additional mark added by gentoo-prefix-bootstrap.
+# probably evil. 
+>=dev-libs/mpc-0.9
+>=sys-devel/binutils-2.22-r2
+>=sys-devel/gcc-4.5.4
+#>=dev-libs/glib-2.32
+' >> eprefix/usr/portage/profiles/package.mask
+
+echo 'emerging binutils and gcc...' >&2
+emerge --oneshot binutils gcc &>> $_log
+
+#gcc-config 4.5.3
+
+#echo 'emerging mpc-0.8.2...' >&2
+#emerge --oneshot '=dev-libs/mpc-0.8.2' &>> $_log
+
+#echo 'emerging bintutils-2.22-r1...' >&2
+#emerge --oneshot '=sys-devel/binutils-2.22-r1' &>> $_log
+
+#echo 'emerging gcc-4.5.3-r2...' >&2
+#emerge --oneshot '=sys-devel/gcc-4.5.3-r2' &>> $_log
+
+echo 'emerging pkgconfig...' >&2
+emerge --oneshot pkgconfig
+
 echo 'emerging system...' >&2
-set +e
+#set +e
 emerge -e system &>> $_log
-_emerge_system_exit=$?
-if [ $_emerge_system_exit != 0 -a
-  "$(tail -1 $_log)" != '>>> No outdated packages were found on your system.'\
-  ]; then
-  echo '`emerge -e system` seems to be failed. exit. ' >&2
-  exit 1
-fi
-set -e
+#_emerge_system_exit=$?
+#if [ $_emerge_system_exit != 0 -a \
+#  "$(tail -1 $_log)" != '>>> No outdated packages were found on your system.'\
+#  ]; then
+#  echo '`emerge -e system` seems to be failed. exit. ' >&2
+#  exit 1
+#fi
+#set -e
 
 echo 'creating $EPREFIX/startprefix...' >&2
 $_root_dir/make-startprefix
